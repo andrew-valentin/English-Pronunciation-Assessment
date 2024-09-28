@@ -22,7 +22,7 @@ phrase = "Hello, how are you?"
 def get_pronunciation_score(theScore, model, sentence, word_scores, language):
     if language == 'en-US':
         language = 'English'
-    else:
+    elif language == 'es-ES':
         language = 'Spanish'
     messages = [
         {
