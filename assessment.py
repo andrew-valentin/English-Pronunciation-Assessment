@@ -38,22 +38,21 @@ def get_pronunciation_score(theScore, model, sentence, word_scores, language):
     result = client.chat.completions.create(model=model, messages=messages, temperature=0.7, max_tokens=1200)
     return result
 
-def getRecording():
-    st.title("Voice recording test")
-
-    audio_bytes = audio_recorder()
-    if audio_bytes:
-        st.audio(audio_bytes, format="audio/wav")
-
-        wav_file = "audio.wav"
-
-        with open(wav_file, "wb")as f:
-            f.write(audio_bytes)
-
-        st.success(f"recording saved")
+# def getRecording():
+#     st.title("Voice recording test")
+#
+#     audio_bytes = audio_recorder()
+#     if audio_bytes:
+#         st.audio(audio_bytes, format="audio/wav")
+#
+#         wav_file = "audio.wav"
+#
+#         with open(wav_file, "wb")as f:
+#             f.write(audio_bytes)
+#
+#         st.success(f"recording saved")
 
 def getAssessment(phrase, language):
-    getRecording()
 
     speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
     speech_config.speech_recognition_language = language
