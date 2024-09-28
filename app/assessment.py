@@ -2,11 +2,6 @@ import os
 from groq import Groq
 import json
 import azure.cognitiveservices.speech as speechsdk
-import streamlit as st
-from audio_recorder_streamlit import audio_recorder
-import numpy as np
-import io
-import wave
 
 # Groq API Key setup
 os.environ["GROQ_API_KEY"] = "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"
