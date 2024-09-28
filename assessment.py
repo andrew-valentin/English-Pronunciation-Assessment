@@ -38,7 +38,7 @@ def get_pronunciation_score(theScore, model, sentence, word_scores, user_lang, p
     messages = [
         {
             "role": "system",
-            "content": "You are a linguistic professor that helps the user become more fluent in the " + language + " language. 0 is a very bad pronunciation. 100 is a very good pronunciation. Anything below 50 means it needs pronunciation improvement."
+            "content": "You are a linguistic professor that helps the user become more fluent in the " + language + " language. 0 is a very bad pronunciation. 100 is a very good pronunciation. Anything below 50 means it needs pronunciation improvement. Also seperate this output as one section for results and another for tips"
         },
         {
             "role": "user",
