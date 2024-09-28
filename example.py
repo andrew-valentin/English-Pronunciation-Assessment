@@ -24,27 +24,36 @@ st.button('Click me', on_click=click_button)
 #     st.write('Button clicked!')
 #     st.slider('Select a value')
 
-session = False
+# phrase = ""
+# language = ""
 
-def change_English():
-    st.session_state.clicked = "us-EN"
+if 'language' not in st.session_state:
+    st.session_state.language = "en-US"  # Default language
+    st.session_state.phrase = "We are transitioning"
 
-def change_Spanish():
-    st.session_state.clicked = "es-ES"
+#
+# def change_English():
+#     st.session_state.clicked = "us-EN"
+#
+# def change_Spanish():
+#     st.session_state.clicked = "es-ES"
 
-if st.button("EN", on_click=change_English()):
-    language = "en-US"
-    phrase = "We are transitioning"
-    st.write(language)
-    st.write("Now say: " + phrase)
-if st.button("SP", on_click=change_Spanish()):
-    language = "es-ES"
-    phrase = "Donde esta la biblioteca"
-    st.write(language)
-    st.write("Now say: " + phrase)
 
-# st.write(language)
-# st.write("Now say: " + phrase)
+if st.button("EN"):
+    st.session_state.language = "en-US"
+    st.session_state.phrase = "We are transitioning"
+    # st.write(language)
+    # st.write("Now say: " + phrase)
+if st.button("SP"):
+    st.session_state.language = "es-ES"
+    st.session_state.phrase = "Donde esta la biblioteca"
+    # st.write(language)
+    # st.write("Now say: " + phrase)
+
+st.write(f"Selected Language: {st.session_state.language}")
+st.write(f"Now say: {st.session_state.phrase}")
+
+# audio_bytes = audio_recorder()
 
 if audio_bytes:
     st.audio(audio_bytes, format="audio/wav")
@@ -55,6 +64,8 @@ if audio_bytes:
         f.write(audio_bytes)
 
     st.success(f"recording saved")
-    from assessment import getAssessment
-    result = getAssessment(phrase, language)
-    st.write(result)
+
+    if st.session_state.phrase and st.session_state.language:
+        from assessment import getAssessment
+        result = getAssessment(st.session_state.phrase, st.session_state.language)
+        st.write(result)
