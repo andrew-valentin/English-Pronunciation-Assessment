@@ -1,20 +1,25 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import reactLogo from './assets/react.svg';
+import viteLogo from '/vite.svg';
+import './index.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isBlinking, setIsBlinking] = useState(false);
+
+  const handleButtonClick = () => {
+    setIsBlinking(!isBlinking);
+  };
 
   return (
     <>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          Start Recording
-        </button>
-      </div>
+      <button
+        className={isBlinking ? 'blinking' : ''}
+        onClick={handleButtonClick}
+      >
+        {isBlinking ? 'Stop Recording' : 'Start Recording'}
+      </button>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

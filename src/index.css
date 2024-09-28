@@ -13,6 +13,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -49,10 +56,10 @@ button {
 button:hover {
   border-color: #646cff;
 }
-button:focus,
+/* button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
+} */
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -65,4 +72,15 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+@keyframes blink {
+  0% { border-color: red; }
+  50% { border-color: transparent; }
+  100% { border-color: red; }
+}
+
+.blinking {
+  border: 2px solid red;
+  animation: blink 1s infinite;
 }
