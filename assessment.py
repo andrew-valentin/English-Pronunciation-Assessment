@@ -15,15 +15,26 @@ client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 # Azure Speech SDK setup
 speech_key = "409746937a7e4969a8e69fed1f19294f"
 service_region = "eastus"
-language = "en-US" #en-US or es-ES
-phrase = "Hello, how are you?"
 
 # Function to get pronunciation score analysis from Groq API
-def get_pronunciation_score(theScore, model, sentence, word_scores, language):
-    if language == 'en-US':
+def get_pronunciation_score(theScore, model, sentence, word_scores, user_lang, practice_lang):
+    if practice_lang == 'en-US':
         language = 'English'
-    elif language == 'es-ES':
+    if practice_lang == 'es-ES':
         language = 'Spanish'
+    if practice_lang == 'zh-CN':
+        language = 'Chinese (Mandarin, Simplified)'
+    if practice_lang == 'fr-FR':
+        language = 'French'
+    if practice_lang == 'it-IT':
+        language = 'Italian'
+    if practice_lang == 'de-DE':
+        language = 'German'
+    if practice_lang == 'ja-JP':
+        language = 'Japanese'
+    if practice_lang == 'ru-RU':
+        language = 'Russian'
+
     messages = [
         {
             "role": "system",
@@ -31,33 +42,19 @@ def get_pronunciation_score(theScore, model, sentence, word_scores, language):
         },
         {
             "role": "user",
-            "content": f"Sentence: {sentence}\n\nWord Scores:\n{word_scores}\n\nOverall Score: {theScore}\n\nPrompt: Analyze the score {theScore} and provide feedback on how to improve pronunciation for the sentence."
+            "content": f"Sentence: {sentence}\n\nWord Scores:\n{word_scores}\n\nOverall Score: {theScore}\n\nPrompt: Analyze the score {theScore} and provide feedback in " + user_lang + " on how to improve pronunciation for the sentence."
         }
     ]
 
     result = client.chat.completions.create(model=model, messages=messages, temperature=0.7, max_tokens=1200)
     return result
 
-# def getRecording():
-#     st.title("Voice recording test")
-#
-#     audio_bytes = audio_recorder()
-#     if audio_bytes:
-#         st.audio(audio_bytes, format="audio/wav")
-#
-#         wav_file = "audio.wav"
-#
-#         with open(wav_file, "wb")as f:
-#             f.write(audio_bytes)
-#
-#         st.success(f"recording saved")
-
-def getAssessment(phrase, language):
+def getAssessment(phrase, user_lang, practice_lang):
 
     speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
-    speech_config.speech_recognition_language = language
+    speech_config.speech_recognition_language = practice_lang
     audio_config = speechsdk.AudioConfig(filename='audio.wav')
-    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, language=language, audio_config=audio_config)
+    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, language=practice_lang, audio_config=audio_config)
 
     pronunciation_config = speechsdk.PronunciationAssessmentConfig( 
         reference_text=phrase, 
@@ -98,8 +95,5 @@ def getAssessment(phrase, language):
         word_scores += str(word.word) + ' : ' + str(word.accuracy_score) + '\n'
 
     # Replace input with the Azure accuracy score
-    result = get_pronunciation_score(accuracy_overall, "llama-3.1-70b-versatile", sentence, word_scores, language)
+    result = get_pronunciation_score(accuracy_overall, "llama-3.1-70b-versatile", sentence, word_scores, user_lang, practice_lang)
     return result.choices[0].message.content
-
-# Print the Groq comment analysis
-print(getAssessment(phrase, language))
