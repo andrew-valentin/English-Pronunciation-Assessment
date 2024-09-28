@@ -43,7 +43,7 @@ if 'practice_language' not in st.session_state:
     st.session_state.practice_language = "en-US"  # Default language
     st.session_state.phrase = "We are transitioning to the next state."
 
-user_language = st.selectbox(
+st.session_state.user_language = st.selectbox(
 "Select your language: ",
 ("English", 
  "Spanish",
@@ -55,7 +55,7 @@ user_language = st.selectbox(
  "Russian"),
 )
 
-practice_language = st.selectbox(
+st.session_state.practice_language = st.selectbox(
 "Select a language to practice: ",
 ("English", 
  "Spanish",
@@ -67,8 +67,8 @@ practice_language = st.selectbox(
  "Russian"),
 )
 
-st.session_state.user_language = user_language
-practiceSwitchCase(practice_language)
+st.session_state.user_language = st.session_state.user_language
+practiceSwitchCase(st.session_state.practice_language)
 
 st.write(f"Selected Language: {st.session_state.practice_language}")
 st.write(f"Now say: {st.session_state.phrase}")
@@ -85,4 +85,12 @@ if audio_bytes:
 
     if st.session_state.phrase and st.session_state.user_language and st.session_state.practice_language:
         result = getAssessment(st.session_state.phrase, st.session_state.user_language, st.session_state.practice_language)
-        st.write(result)
+        # st.write(result)
+        st.markdown(
+            f"""
+            <div style="background-color: rgb(61 114 213 / 20%); padding: 10px; border-radius: 5px; opacity: 1;">
+                {result}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
