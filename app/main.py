@@ -192,7 +192,7 @@ def main():
             st.markdown(
                 f"""
                 <div style="background-color: rgb(61 114 213 / 20%); padding: 10px; border-radius: 5px; opacity: 1;">
-                    {'"' + phrase + '":'}
+                    {'Here is what "' + phrase + '" should sound like:'}
                 </div>
                 """,
                 unsafe_allow_html=True
