@@ -30,7 +30,8 @@ def read_file(filename):
 def is_file_empty(file_path):
     return os.path.getsize(file_path) == 0
 
-def selectLang(content, filename, start, end):
+@st.cache_data
+def selectLang(df, content, filename, start, end):
     phraseIndex = random.randint(start+1, end-1)
     phraseText = df.at[phraseIndex, 'text']
     if (len(content) == 0):
@@ -38,64 +39,53 @@ def selectLang(content, filename, start, end):
             file.write(phraseText)
     return phraseText
 
-def practiceSwitchCase(content, filename, language):
+@st.cache_data
+def practiceSwitchCase(df, content, filename, language):
     if language == 'English':
         st.session_state.practice_language = "en-US"
-        st.session_state.phrase = "We are transitioning to the next state."
         st.session_state.speaker = "en-US-Standard-A"
-        st.session_state.phrase = selectLang(content, filename, 32, 46)
+        phrase = selectLang(df, content, filename, 32, 46)
     if language == 'Spanish':
         st.session_state.practice_language = "es-ES"
-        st.session_state.phrase = "Donde esta la biblioteca?"
         st.session_state.speaker = "es-ES-Standard-A"
-        st.session_state.phrase = selectLang(content, filename, 0, 15)
+        phrase = selectLang(df, content, filename, 0, 15)
     if language == 'Chinese (Mandarin, Simplified)':
         st.session_state.practice_language = "zh-CN"
-        st.session_state.phrase = "很高兴认识你"
         st.session_state.speaker = "cmn-CN-Standard-A"
-        st.session_state.phrase = selectLang(content, filename, 117, 131)
+        phrase = selectLang(df, content, filename, 117, 131)
     if language == 'French':
         st.session_state.practice_language = "fr-FR"
-        st.session_state.phrase = "Enchanté mon ami. Parlez-vous anglais?"
         st.session_state.speaker = "fr-FR-Standard-A"
-        st.session_state.phrase = selectLang(content, filename, 16, 31)
+        phrase = selectLang(df, content, filename, 16, 31)
     if language == 'Italian':
         st.session_state.practice_language = "it-IT"
-        st.session_state.phrase = "Mi aiuti, per favore?"
         st.session_state.speaker = "it-IT-Standard-C"
-        st.session_state.phrase = selectLang(content, filename, 47, 61)
+        phrase = selectLang(df, content, filename, 47, 61)
     if language == 'German':
         st.session_state.practice_language = "de-DE"
-        st.session_state.phrase = "Ich spreche ein wenig Deutsch."
         st.session_state.speaker = "de-DE-Standard-B"
-        st.session_state.phrase = selectLang(content, filename, 62,76)
+        phrase = selectLang(df, content, filename, 62,76)
     if language == 'Japanese':
         st.session_state.practice_language = "ja-JP"
-        st.session_state.phrase = "おはようございます"
         st.session_state.speaker = "ja-JP-Standard-A"
-        st.session_state.phrase = selectLang(content, filename, 97,116)
+        phrase = selectLang(df, content, filename, 97,116)
     if language == 'Russian':
         st.session_state.practice_language = "ru-RU"
-        st.session_state.phrase = "Как доехать до вокзала?"
         st.session_state.speaker = "ru-RU-Standard-A"
-        st.session_state.phrase = selectLang(content, filename, 77,96)
+        phrase = selectLang(df, content, filename, 77,96)
     
     with open(filename, 'w', encoding="utf-8") as file:
-        file.write(st.session_state.phrase)
+        file.write(phrase)
+    
+    return phrase
 
 def main():
     filename = 'prevPhrase.txt'
     content = ''
-    read_file(filename)
 
-    # Example usage
-    file_path = 'prevPhrase.txt'
-    if is_file_empty(file_path):
-        print("The file is empty.")
-    else:
-        print("The file is not empty.")
-
-    df = pd.read_csv('languagePhrases.csv', on_bad_lines='skip')
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, 'languagePhrases.csv')
+    df = pd.read_csv(file_path, on_bad_lines='skip')
 
     phraseText = ""
 
@@ -107,8 +97,7 @@ def main():
 
     if 'practice_language' not in st.session_state:
         st.session_state.practice_language = "en-US"  # Default language
-        st.session_state.phrase = "We are transitioning to the next state."
-        st.session_state.phrase = selectLang(content, filename, 32, 46)
+        selectLang(df, content, filename, 32, 46)
 
     user_language = st.selectbox(
     "Select your language: ",
@@ -135,9 +124,10 @@ def main():
     )
 
     st.session_state.user_language = user_language
-    practiceSwitchCase(content, filename, practice_language)
 
-    st.write(f'Now say: "{st.session_state.phrase}"')
+    phrase = practiceSwitchCase(df, content, filename, practice_language)
+    
+    st.write(f'Now say: "{phrase}"')
 
     audio_bytes = audio_recorder()
 
@@ -151,8 +141,8 @@ def main():
 
         st.success(f"recording saved")
 
-        if st.session_state.phrase and st.session_state.user_language and st.session_state.practice_language:
-            result = getAssessment(st.session_state.phrase, st.session_state.user_language, st.session_state.practice_language)
+        if phrase and st.session_state.user_language and st.session_state.practice_language:
+            result = getAssessment(phrase, st.session_state.user_language, st.session_state.practice_language)
             st.markdown(
                 f"""
                 <div style="background-color: rgb(61 114 213 / 20%); padding: 10px; border-radius: 5px; opacity: 1;">
@@ -164,8 +154,8 @@ def main():
 
             # text to speech reference
             client = texttospeech.TextToSpeechClient(credentials=creds)
- 
-            text = st.session_state.phrase
+
+            text = phrase
 
             # Set up the audio configuration
             audio_config = texttospeech.AudioConfig(
@@ -202,17 +192,12 @@ def main():
             st.markdown(
                 f"""
                 <div style="background-color: rgb(61 114 213 / 20%); padding: 10px; border-radius: 5px; opacity: 1;">
-                    {'"' + st.session_state.phrase + '":'}
+                    {'"' + phrase + '":'}
                 </div>
                 """,
                 unsafe_allow_html=True
             )
             st.audio("reference.mp3", format="audio/mpeg", loop=False)
-        
-        # save current language 
-        if st.button("Another Phrase"):
-            with open('prevLang.txt', 'w',encoding="utf-8") as file:
-                file.write(st.session_state.practice_language)
 
 if __name__ == '__main__':
     main()
