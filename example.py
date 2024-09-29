@@ -8,6 +8,13 @@ from assessment import getAssessment
 import pandas as pd
 import random
 
+filename = 'prevPhrase.txt'
+
+# Open the file in read mode
+with open(filename, 'r') as file:
+    # Read the content of the file
+    content = file.read()
+
 # Read the CSV files
 df1 = pd.read_csv('English_phrases_and_sayings.csv', on_bad_lines='skip')
 df2 = pd.read_csv('spanishPhrases.csv', on_bad_lines='skip')
@@ -15,25 +22,21 @@ df2 = pd.read_csv('spanishPhrases.csv', on_bad_lines='skip')
 # Select a random element
 senLength = ""
 
-while (len(senLength) < 10):
+while (len(senLength) < 10 or len(senLength) > 30):
     englishPhrase = random.randint(0, len(df1) - 1)
     englishElement = df1.at[englishPhrase, 'text']
     senLength = englishElement.split()
+    if (len(content) == 0):
+        with open(filename, 'w') as file:
+            file.write(englishElement)
 
 spanishPhrase = random.randint(0, len(df2) - 1)
 spanishElement = df2.at[spanishPhrase, 'text']
 
-# Create a button
-if st.button('English'):
-    st.write(englishElement + '.')
-
-if st.button('Spanish'):
-    st.write(spanishElement + '.')
-
 def practiceSwitchCase(language):
     if language == 'English':
         st.session_state.practice_language = "en-US"
-        st.session_state.phrase = englishElement + '.'
+        st.session_state.phrase = englishElement
     if language == 'Spanish':
         st.session_state.practice_language = "es-ES"
         st.session_state.phrase = spanishElement
@@ -95,12 +98,12 @@ st.session_state.user_language = st.session_state.user_language
 practiceSwitchCase(st.session_state.practice_language)
 
 st.write(f"Selected Language: {st.session_state.practice_language}")
-st.write(f"Now say: {st.session_state.phrase}")
+
 
 # Create a slider
 slider_value = st.slider(
     "How many phrases would you like to practice?",  # Label for the slider
-    min_value=0,        # Minimum value
+    min_value=5,        # Minimum value
     max_value=15,      # Maximum value
     value=5,           # Default value
     step=1              # Step size
@@ -108,6 +111,7 @@ slider_value = st.slider(
 
 # Display the selected value
 st.write(f"You selected: {slider_value}")
+st.write(f"Now say: {st.session_state.phrase}")
 
 if audio_bytes:
     st.audio(audio_bytes, format="audio/wav")
@@ -120,7 +124,7 @@ if audio_bytes:
     st.success(f"recording saved")
 
     if st.session_state.phrase and st.session_state.user_language and st.session_state.practice_language:
-        result = getAssessment(st.session_state.phrase, st.session_state.user_language, st.session_state.practice_language)
+        result = getAssessment(content, st.session_state.user_language, st.session_state.practice_language)
         st.markdown(
             f"""
             <div style="background-color: rgb(61 114 213 / 20%); padding: 10px; border-radius: 5px; opacity: 1;">
@@ -129,3 +133,7 @@ if audio_bytes:
             """,
             unsafe_allow_html=True
         )
+        
+    with open(filename, 'w') as file:
+        pass  # Doing nothing here effectively clears the file
+        
