@@ -29,9 +29,8 @@ def practiceSwitchCase(language):
         st.session_state.phrase = "Как доехать до вокзала?"
 
 def main():
-    st.title("Language Pronunciation Assessment")
-
-    audio_bytes = audio_recorder()
+    st.title("Linguistify.")
+    st.text("Master your speech.")
 
     if 'user_language' not in st.session_state:
         st.session_state.user_language = "English"  # Default language
@@ -69,6 +68,8 @@ def main():
 
     st.write(f"Selected Language: {st.session_state.practice_language}")
     st.write(f"Now say: {st.session_state.phrase}")
+
+    audio_bytes = audio_recorder()
 
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
