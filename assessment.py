@@ -2,17 +2,18 @@ import os
 from groq import Groq
 import json
 import azure.cognitiveservices.speech as speechsdk
-import google.cloud.secretmanager
-
-secrets = google.cloud.secretmanager.SecretManagerServiceClient()
+import streamlit as st
+from audio_recorder_streamlit import audio_recorder
+import numpy as np
+import io
+import wave
 
 # Groq API Key setup
-groq_name = 'projects/pronunciation-assessment-2024/secrets/groq_api_key/versions/latest'
-groq_secret = secrets.access_secret_version(name=groq_name)
-groq_payload = groq_secret.payload.data.decode("UTF-8")
-client = Groq(api_key=groq_payload)
+os.environ["GROQ_API_KEY"] = "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"
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 # Azure Speech SDK setup
+speech_key = "409746937a7e4969a8e69fed1f19294f"
 service_region = "eastus"
 
 # Function to get pronunciation score analysis from Groq API
@@ -37,7 +38,7 @@ def get_pronunciation_score(theScore, model, sentence, word_scores, user_lang, p
     messages = [
         {
             "role": "system",
-            "content": "You are a linguistic professor that helps the user become more fluent in the " + language + " language. 0 is a very bad pronunciation. 100 is a very good pronunciation. Anything below 50 means it needs pronunciation improvement. Also seperate this output as one section for results and another for tips"
+            "content": "You are a linguistic professor that helps the user become more fluent in the " + language + " language. 0 is a very bad pronunciation. 100 is a very good pronunciation. Anything below 50 means it needs pronunciation improvement."
         },
         {
             "role": "user",
@@ -49,15 +50,8 @@ def get_pronunciation_score(theScore, model, sentence, word_scores, user_lang, p
     return result
 
 def getAssessment(phrase, user_lang, practice_lang):
-<<<<<<< HEAD
-    speech_name = 'projects/pronunciation-assessment-2024/secrets/speech_key/versions/latest'
-    speech_secret = secrets.access_secret_version(name=speech_name)
-    speech_payload = speech_secret.payload.data.decode("UTF-8")
-    speech_config = speechsdk.SpeechConfig(subscription=speech_payload, region=service_region)
-=======
 
     speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
->>>>>>> 43f5c0d495f1378dcb17965804990f8d09170133
     speech_config.speech_recognition_language = practice_lang
     audio_config = speechsdk.AudioConfig(filename='audio.wav')
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, language=practice_lang, audio_config=audio_config)

@@ -1,6 +1,7 @@
 import streamlit as st
 from audio_recorder_streamlit import audio_recorder
 from assessment import getAssessment
+<<<<<<< HEAD
 from google.cloud import texttospeech
 import google.auth
 import google.cloud.secretmanager
@@ -17,11 +18,14 @@ with tempfile.NamedTemporaryFile(delete=False, mode='w', suffix='.json') as temp
     temp_file_path = temp_file.name
 
 creds, project = google.auth.load_credentials_from_file(temp_file_path)
+=======
+>>>>>>> 43f5c0d495f1378dcb17965804990f8d09170133
 
 def practiceSwitchCase(language):
     if language == 'English':
         st.session_state.practice_language = "en-US"
         st.session_state.phrase = "We are transitioning to the next state."
+<<<<<<< HEAD
         st.session_state.speaker = "en-US-Standard-A"
     if language == 'Spanish':
         st.session_state.practice_language = "es-ES"
@@ -51,6 +55,29 @@ def practiceSwitchCase(language):
         st.session_state.practice_language = "ru-RU"
         st.session_state.phrase = "Как доехать до вокзала?"
         st.session_state.speaker = "ru-RU-Standard-A"
+=======
+    if language == 'Spanish':
+        st.session_state.practice_language = "es-ES"
+        st.session_state.phrase = "Donde esta la biblioteca?"
+    if language == 'Chinese (Mandarin, Simplified)':
+        st.session_state.practice_language = "zh-CN"
+        st.session_state.phrase = "很高兴认识你"
+    if language == 'French':
+        st.session_state.practice_language = "fr-FR"
+        st.session_state.phrase = "Enchanté mon ami. Parlez-vous anglais?"
+    if language == 'Italian':
+        st.session_state.practice_language = "it-IT"
+        st.session_state.phrase = "Mi aiuti, per favore?"
+    if language == 'German':
+        st.session_state.practice_language = "de-DE"
+        st.session_state.phrase = "Ich spreche ein wenig Deutsch."
+    if language == 'Japanese':
+        st.session_state.practice_language = "ja-JP"
+        st.session_state.phrase = "おはようございます"
+    if language == 'Russian':
+        st.session_state.practice_language = "ru-RU"
+        st.session_state.phrase = "Как доехать до вокзала?"
+>>>>>>> 43f5c0d495f1378dcb17965804990f8d09170133
 
 def main():
     st.title("Linguistify.")
