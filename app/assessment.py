@@ -49,15 +49,10 @@ def get_pronunciation_score(theScore, model, sentence, word_scores, user_lang, p
     return result
 
 def getAssessment(phrase, user_lang, practice_lang):
-<<<<<<< HEAD
     speech_name = 'projects/pronunciation-assessment-2024/secrets/speech_key/versions/latest'
     speech_secret = secrets.access_secret_version(name=speech_name)
     speech_payload = speech_secret.payload.data.decode("UTF-8")
     speech_config = speechsdk.SpeechConfig(subscription=speech_payload, region=service_region)
-=======
-
-    speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
->>>>>>> 43f5c0d495f1378dcb17965804990f8d09170133
     speech_config.speech_recognition_language = practice_lang
     audio_config = speechsdk.AudioConfig(filename='audio.wav')
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, language=practice_lang, audio_config=audio_config)
